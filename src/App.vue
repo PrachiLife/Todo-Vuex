@@ -1,5 +1,7 @@
 <template>
-  <TodoComponent />
+  <v-app>
+    <TodoComponent />
+  </v-app>
 </template>
 
 <script>
