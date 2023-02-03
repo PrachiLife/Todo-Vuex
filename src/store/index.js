@@ -14,14 +14,11 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    ADD_ON_ENTER: (state, Payload) => {
-      console.log(state, Payload);
+    ADD_ON_ENTER: (state, TaskName) => {
       state.id = state.id + 1;
-      state.Tasks.push({ TaskName: Payload, id: state.id });
+      state.Tasks.push({ TaskName: TaskName, id: state.id });
     },
     DELETE_THE_TASK: (state, Id) => {
-      console.log(state);
-      console.log("delete the task", Id);
       state.Tasks.forEach((Task, index) => {
         if (Task.id == Id) {
           console.log(Task);
@@ -29,13 +26,23 @@ export default new Vuex.Store({
         }
       });
     },
+    EDIT_TASK: (state, data) => {
+      state.Tasks.forEach((Task, index) => {
+        if (Task.id == data[1]) {
+          state.Tasks[index].TaskName = data[0];
+        }
+      });
+    },
   },
   actions: {
-    addOnEnter: (context, Payload) => {
-      context.commit("ADD_ON_ENTER", Payload);
+    addOnEnter: (context, TaskName) => {
+      context.commit("ADD_ON_ENTER", TaskName);
     },
     deleteTask: (context, Id) => {
       context.commit("DELETE_THE_TASK", Id);
+    },
+    editTask: (context, data) => {
+      context.commit("EDIT_TASK", data);
     },
   },
   modules: {},

@@ -16,12 +16,13 @@
         <v-text-field
           outlined
           label="Add Task"
+          ref="input"
           v-model="TaskName"
-          @keyup.enter="addOnEnter(TaskName)"
+          @keyup.enter="addOnEnter()"
         ></v-text-field>
       </div>
       <div v-for="(task, index) in tasksInputs" :key="index">
-        <TodoTask :task="task" />
+        <TodoTask :task="task" @data="editTask" />
       </div>
     </v-container>
   </v-card>
@@ -34,6 +35,7 @@ export default {
   data: () => ({
     due: null,
     TaskName: "",
+    EditId: -1,
   }),
   computed: {
     ...mapGetters(["tasksInputs"]),
@@ -42,16 +44,25 @@ export default {
     TodoTask,
   },
   methods: {
-    addOnEnter(Payload) {
-      this.$store.dispatch("addOnEnter", Payload);
-      this.TaskName = "";
+    addOnEnter() {
+      if (this.EditId != -1) {
+        this.$store.dispatch("editTask", [this.TaskName, this.EditId]);
+        this.TaskName = "";
+        this.EditId = -1;
+      } else if (this.TaskName != "") {
+        this.$store.dispatch("addOnEnter", this.TaskName);
+        this.TaskName = "";
+      } else {
+        console.log("In the addOnEnter function");
+      }
+    },
+    editTask(data) {
+      this.$refs.input.focus();
+      this.EditId = data[1];
+      this.TaskName = data[0];
     },
   },
 };
 </script>
 
-<style scoped>
-.border {
-  border: 2px solid #9fa8da;
-}
-</style>
+<style scoped></style>

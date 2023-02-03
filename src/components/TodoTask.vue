@@ -13,7 +13,13 @@
         {{ task.TaskName }}
       </span>
       <span class="align-self-center ml-auto">
-        <v-icon color="indigo lighten-1" class="IconSize"> mdi-pencil </v-icon>
+        <v-icon
+          color="indigo lighten-1"
+          class="IconSize"
+          @click="editTask([task.TaskName, task.id])"
+        >
+          mdi-pencil
+        </v-icon>
         <v-icon
           color="red lighten-1"
           class="IconSize"
@@ -35,8 +41,15 @@ export default {
     deleteTask(Id) {
       this.$store.dispatch("deleteTask", Id);
     },
+    editTask(data) {
+      this.$emit("data", data);
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.border {
+  border: 2px solid #9fa8da;
+}
+</style>
