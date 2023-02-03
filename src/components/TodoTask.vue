@@ -7,6 +7,7 @@
           hide-details
           class="align-self-center"
           v-model="checkedBox"
+          :value="checkedTask([task.Checked, task.id])"
         ></v-checkbox
       ></span>
       <span class="align-self-center">
@@ -62,6 +63,11 @@ export default {
     },
     editTask(data) {
       this.$emit("data", data);
+    },
+    checkedTask(data) {
+      data[0] = this.checkedBox;
+      this.$store.dispatch("checkedTask", data);
+      console.log(data[0], this.checkedBox);
     },
   },
 };
