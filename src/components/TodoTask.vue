@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="d-flex border rounded-lg mb-2">
-      <span class="mb-4">
+      <span class="mb-3">
         <v-checkbox
           color="primary"
           hide-details
@@ -10,12 +10,18 @@
           :value="checkedTask([task.Checked, task.id])"
         ></v-checkbox
       ></span>
-      <span class="align-self-center">
+      <span
+        class="align-self-center"
+        :class="{ 'text-decoration-line-through': task.Checked }"
+      >
         {{ task.TaskName }}
       </span>
       <span class="align-self-center ml-auto">
         <div class="d-flex flex-column">
-          <div class="grey--text">
+          <div>
+            Due Date: <span class="grey--text"> {{ task.Due }}</span>
+          </div>
+          <div class="grey--text ml-5">
             {{
               task.Date.getFullYear() +
               "/" +
@@ -67,7 +73,6 @@ export default {
     checkedTask(data) {
       data[0] = this.checkedBox;
       this.$store.dispatch("checkedTask", data);
-      console.log(data[0], this.checkedBox);
     },
   },
 };

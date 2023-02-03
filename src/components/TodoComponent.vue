@@ -25,9 +25,34 @@
             ref="input"
             v-model="TaskName"
             @keyup.enter="addOnEnter()"
-            class="mb"
+            class="mb max-width"
             :disabled="TodoComplete"
           ></v-text-field>
+          <div class="width">
+            <v-menu
+              v-model="showDatePicker"
+              :close-on-content-click="false"
+              transition="scale-transition"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  @keyup.enter="addOnEnter()"
+                  :value="due"
+                  v-bind="attrs"
+                  v-on="on"
+                  outlined
+                  prepend-icon="mdi-calendar"
+                  redaonly
+                  label="Due Date"
+                  :disabled="TodoComplete"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="due"
+                :min="new Date().toISOString().substr(0, 10)"
+              ></v-date-picker>
+            </v-menu>
+          </div>
         </div>
         <div class="d-flex justify-end mb-2">
           <span>
@@ -41,8 +66,25 @@
           ></span>
           <span class="mt-4"> TodoComplete</span>
         </div>
-        <div v-for="task in tasksInputs" :key="task['id']">
-          <TodoTask :task="task" @data="editTask" />
+        <div v-if="Today">Today</div>
+        <div v-for="task in tasksInputs" :key="'A' + task['id']">
+          <div v-if="show(task)">
+            <TodoTask :task="task" @data="editTask" />
+          </div>
+        </div>
+        <hr class="indigo lighten-1 mb-2" v-if="Today" />
+        <div v-if="Tomorrow">Tomorrow</div>
+        <div v-for="task in tasksInputs" :key="'B' + task['id']">
+          <div v-if="showTomorrow(task)">
+            <TodoTask :task="task" @data="editTask" />
+          </div>
+        </div>
+        <hr class="indigo lighten-1 mb-2" v-if="Tomorrow" />
+        <!-- <div>Rest Task</div> -->
+        <div v-for="task in tasksInputs" :key="'C' + task['id']">
+          <div v-if="!task.render">
+            <TodoTask :task="task" @data="editTask" />
+          </div>
         </div>
       </v-container>
     </v-card>
@@ -62,6 +104,11 @@ export default {
       show: false,
       message: null,
     },
+    showDatePicker: false,
+    Date: new Date(),
+    render: false,
+    Today: false,
+    Tomorrow: false,
   }),
   computed: {
     ...mapGetters(["tasksInputs"]),
@@ -76,9 +123,18 @@ export default {
         this.TaskName = "";
         this.$store.dispatch("dateUpdate", [new Date(), this.EditId]);
         this.EditId = -1;
-      } else if (this.TaskName != "") {
-        this.$store.dispatch("addOnEnter", this.TaskName);
+      } else if (this.TaskName != "" && this.due != null) {
+        this.$store.dispatch("addOnEnter", [this.TaskName, this.due]);
         this.TaskName = "";
+        this.due = null;
+      } else if (
+        (this.TaskName != "" && this.due == null) ||
+        this.TaskName == "" ||
+        this.due != null ||
+        (this.TaskName == "" && this.due == null)
+      ) {
+        this.snackbar.message = "Add Task name and due date both please!!";
+        this.snackbar.show = true;
       } else {
         console.log("In the addOnEnter function");
       }
@@ -92,6 +148,33 @@ export default {
       if (this.TodoComplete == true) {
         this.snackbar.message = "Awesome! your Todo is Completed";
         this.snackbar.show = true;
+      }
+    },
+    show(task) {
+      if (
+        new Date(task["Due"]).getDate() === this.Date.getDate() &&
+        new Date(task["Due"]).getMonth() === this.Date.getMonth() &&
+        new Date(task["Due"]).getFullYear() === this.Date.getFullYear()
+      ) {
+        this.render = true;
+        this.Today = true;
+        this.$store.dispatch("showTask", [this.render, task.id]);
+        return true;
+      }
+    },
+    showTomorrow(task) {
+      if (
+        new Date(task["Due"]).getDate() ===
+          new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getDate() &&
+        new Date(task["Due"]).getMonth() + 1 ===
+          new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getMonth() + 1 &&
+        new Date(task["Due"]).getFullYear() ===
+          new Date(new Date().getTime() + 24 * 60 * 60 * 1000).getFullYear()
+      ) {
+        this.render = true;
+        this.Tomorrow = true;
+        this.$store.dispatch("showTomorrow", [this.render, task.id]);
+        return true;
       }
     },
   },
@@ -110,5 +193,8 @@ export default {
 }
 .absolute {
   position: absolute;
+}
+.max-width {
+  max-width: 49%;
 }
 </style>

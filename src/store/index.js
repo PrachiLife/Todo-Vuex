@@ -7,9 +7,6 @@ export default new Vuex.Store({
   state: {
     Tasks: [],
     id: 0,
-    // TodoComplete: false,
-    //date: new Date(),
-    // checked1: false,
   },
   getters: {
     tasksInputs: (state) => {
@@ -17,23 +14,21 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    ADD_ON_ENTER: (state, TaskName) => {
+    ADD_ON_ENTER: (state, data) => {
       state.id = state.id + 1;
       state.Tasks.push({
-        TaskName: TaskName,
+        TaskName: data[0],
         id: state.id,
         Checked: false,
         Date: new Date(),
+        Due: data[1],
+        render: false,
       });
     },
     DELETE_THE_TASK: (state, Id) => {
       state.Tasks.forEach((Task, index) => {
         if (Task.id == Id) {
-          // state.checked1 = state.Tasks[index].id;
-          console.log(Task);
           state.Tasks.splice(index, 1);
-          //state.Tasks[index].id = state.checked1;
-          console.log("delete-the-task", state.Tasks[index]);
         }
       });
     },
@@ -52,10 +47,23 @@ export default new Vuex.Store({
       });
     },
     CHECKED_TASK: (state, data) => {
-      console.log(state, data);
       state.Tasks.forEach((Task, index) => {
         if (Task.id == data[1]) {
           state.Tasks[index].Checked = data[0];
+        }
+      });
+    },
+    SHOW_TASK: (state, data) => {
+      state.Tasks.forEach((Task, index) => {
+        if (Task.id == data[1]) {
+          state.Tasks[index].render = data[0];
+        }
+      });
+    },
+    SHOW_TOMORROW: (state, data) => {
+      state.Tasks.forEach((Task, index) => {
+        if (Task.id == data[1]) {
+          state.Tasks[index].render = data[0];
         }
       });
     },
@@ -75,6 +83,12 @@ export default new Vuex.Store({
     },
     checkedTask: (context, data) => {
       context.commit("CHECKED_TASK", data);
+    },
+    showTask: (context, data) => {
+      context.commit("SHOW_TASK", data);
+    },
+    showTomorrow: (context, data) => {
+      context.commit("SHOW_TOMORROW", data);
     },
   },
   modules: {},
