@@ -36,6 +36,7 @@ export default {
     due: null,
     TaskName: "",
     EditId: -1,
+    //date: new Date(),
   }),
   computed: {
     ...mapGetters(["tasksInputs"]),
@@ -48,7 +49,9 @@ export default {
       if (this.EditId != -1) {
         this.$store.dispatch("editTask", [this.TaskName, this.EditId]);
         this.TaskName = "";
+        this.$store.dispatch("dateUpdate", [new Date(), this.EditId]);
         this.EditId = -1;
+        //console.log(new Date());
       } else if (this.TaskName != "") {
         this.$store.dispatch("addOnEnter", this.TaskName);
         this.TaskName = "";

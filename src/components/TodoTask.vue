@@ -4,29 +4,43 @@
       <span class="mb-4">
         <v-checkbox
           color="primary"
-          value="primary"
           hide-details
           class="align-self-center"
+          v-model="checkedBox"
         ></v-checkbox
       ></span>
       <span class="align-self-center">
         {{ task.TaskName }}
       </span>
       <span class="align-self-center ml-auto">
-        <v-icon
-          color="indigo lighten-1"
-          class="IconSize"
-          @click="editTask([task.TaskName, task.id])"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
-          color="red lighten-1"
-          class="IconSize"
-          @click="deleteTask(task.id)"
-        >
-          mdi-delete
-        </v-icon>
+        <div class="d-flex flex-column">
+          <div class="grey--text">
+            {{
+              task.Date.getFullYear() +
+              "/" +
+              (task.Date.getMonth() + 1) +
+              "/" +
+              task.Date.getDate()
+            }}
+            {{ task.Date.getHours() + ":" + task.Date.getMinutes() }}
+          </div>
+          <div class="ml-8">
+            <v-icon
+              color="indigo lighten-1"
+              class="IconSize"
+              @click="editTask([task.TaskName, task.id])"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              color="red lighten-1"
+              class="IconSize"
+              @click="deleteTask(task.id)"
+            >
+              mdi-delete
+            </v-icon>
+          </div>
+        </div>
       </span>
     </div>
   </div>
@@ -36,6 +50,11 @@
 export default {
   props: {
     task: Object,
+  },
+  data() {
+    return {
+      checkedBox: false,
+    };
   },
   methods: {
     deleteTask(Id) {
